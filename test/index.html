@@ -1,30 +1,53 @@
 <!DOCTYPE html>
 <html lang="zh-tw">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>下載 - oldfish影片下載器</title>
-  <link rel="icon" href="assets/icon.png">
+  <link rel="icon" href="assets/icon.png" />
   <style>
     body {
       margin: 0;
+      padding: 0 20px 40px;
       font-family: 'Segoe UI', Arial, sans-serif;
       background: #181a20;
       color: #e5e7eb;
-      padding: 40px 20px;
     }
     nav {
       background: #23262f;
-      padding: 16px 24px;
+      padding: 10px 24px;
       border-bottom: 1px solid #333;
       display: flex;
       align-items: center;
       justify-content: space-between;
       box-shadow: 0 4px 10px #000a;
-      margin-bottom: 40px;
+
+      margin: 0;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+
+      height: 50px;
+      position: fixed;
+      top: 0;
+      left: 20px;
+      right: 20px;
+      z-index: 1000;
+      box-sizing: border-box;
     }
-    nav .nav-title {
-      font-size: 20px;
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-logo {
+      height: 30px;
+      width: auto;
+      filter: drop-shadow(0 0 2px #000);
+    }
+    .nav-title {
+      font-size: 18px;
       font-weight: bold;
       color: #2ecc71;
     }
@@ -40,7 +63,7 @@
     }
     .container {
       max-width: 900px;
-      margin: auto;
+      margin: 80px auto 0;
       background: #23262f;
       padding: 40px;
       border-radius: 20px;
@@ -66,7 +89,7 @@
       color: #ccc;
     }
     .small_title {
-        text-align: center;
+      text-align: center;
     }
     .download-btn {
       display: inline-block;
@@ -102,23 +125,26 @@
 </head>
 <body>
   <nav>
-    <div class="nav-title">oldfish影片下載器</div>
+    <div class="nav-left">
+      <img src="assets/icon-cut.png" alt="logo" class="nav-logo" />
+      <div class="nav-title">oldfish影片下載器</div>
+    </div>
     <div>
       <a href="https://github.com/oldfish101240/oldfish-Video-Downloader" target="_blank">GitHub</a>
     </div>
   </nav>
 
   <div class="container">
-    <img class="title-img" src="assets/icon-cut.png" alt="logo">
+    <img class="title-img" src="assets/icon-cut.png" alt="logo" />
 
     <h1 class="title">oldfish影片下載器</h1>
-    <h2 class=small_title>輕鬆收藏網路上的影片</h2>
+    <h2 class="small_title">輕鬆收藏網路上的影片</h2>
 
     <div class="section">
       <h2>📥 立即下載</h2>
       <p>
         最新版下載：
-        <br>
+        <br />
         <a class="download-btn" href="https://github.com/oldfish101240/oldfish-Video-Downloader/releases" target="_blank">前往 GitHub Releases 頁面</a>
       </p>
     </div>
