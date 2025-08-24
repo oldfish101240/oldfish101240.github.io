@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>下載 - oldfish影片下載器</title>
+  <!-- 建議同時支援 .ico 及 .png，並明確指定 type -->
+  <link rel="icon" type="image/png" href="assets/icon.png" />
+  <link rel="icon" type="image/x-icon" href="assets/icon.ico" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0 20px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #181a20;
+      color: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    nav {
+      background: #23262f;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 10px #000a;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      height: 50px;
+      position: fixed;
+      top: 0;
+      left: 20px;
+      right: 20px;
+      z-index: 1000;
+      box-sizing: border-box;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 4px; /* 原 gap: 0，改為 4px 更緊湊 */
+    }
+    .nav-logo {
+      height: 30px;
+      width: auto;
+      filter: drop-shadow(0 0 2px #000);
+    }
+    .nav-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2ecc71;
+    }
+    nav a {
+      color: #e5e7eb;
+      text-decoration: none;
+      font-size: 16px;
+      margin-left: 20px;
+      transition: color 0.2s;
+    }
+    nav a:hover {
+      color: #2ecc71;
+    }
+    .container {
+      max-width: calc(100vw - 40px); /* 與nav等寬 */
+      width: 100%;
+      margin: 80px auto 100px auto; /* 置中 */
+      background: #23262f;
+      padding: 40px 24px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #0006;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .title-img {
+      display: block;
+      margin: auto;
+      width: 8%;
+      height: auto;
+      max-width: 500px;
+      filter: drop-shadow(0 0 10px #000);
+      margin-bottom: 6px; /* 再縮小 */
+    }
+    h1 {
+      color: #2ecc71;
+      font-size: 48px;
+      margin-bottom: 6px; /* 再縮小 */
+      margin-top: 0;
+    }
+    .small_title {
+      color: #ccc;
+      margin-bottom: 8px; /* 再縮小 */
+      margin-top: 0;
+    }
+    .download-btn {
+      display: inline-block;
+      background: #27ae60;
+      color: #fff;
+      font-weight: bold;
+      padding: 12px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 18px;
+      box-shadow: 0 4px 10px #000a;
+      transition: 0.2s;
+      margin-bottom: 10px;
+      margin-top: 0;
+    }
+    .download-btn:hover {
+      background: #219150;
+    }
+    .download-note {
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 0;
+    }
+    .footer {
+      font-size: 14px;
+      color: #777;
+      /* 移除 position: fixed 與相關屬性 */
+      /* position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%; */
+      text-align: center;
+      padding: 10px 0;
+      background: transparent;
+      margin-top: 40px;
+    }
+    .screenshot-carousel {
+      width: 100%;
+      max-width: none;
+      /* 移除外部 padding 與 margin，讓其與 container 同寬 */
+      margin: 32px 0 0 0;
+      padding-left: 0;
+      padding-right: 0;
+      min-height: 380px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 10;
+    }
+    .carousel-track {
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: none;
+      border-radius: 18px;
+      /* 移除陰影 */
+      /* box-shadow: 0 4px 24px #0004; */
+      padding-left: 0;
+      padding-right: 0;
+      padding: 48px 0;
+      min-height: 320px;
+      height: 380px;
+      position: relative;
+      max-height: 70vh;
+      box-sizing: border-box;
+    }
+    .carousel-img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.85);
+      opacity: 0;
+      z-index: 1;
+      pointer-events: none;
+      width: auto;
+      height: 320px;
+      max-width: 90vw;
+      max-height: 60vh;
+      margin: 0 10px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px #0003;
+      background: #222;
+      object-fit: contain;
+      filter: grayscale(30%) brightness(0.7);
+      transition:
+        transform 0.5s cubic-bezier(.4,0,.2,1),
+        opacity 0.5s cubic-bezier(.4,0,.2,1),
+        filter 0.5s cubic-bezier(.4,0,.2,1);
+      display: block;
+    }
+    .carousel-img.active {
+      opacity: 1;
+      filter: none;
+      transform: translate(-50%, -50%) scale(1);
+      z-index: 2;
+      pointer-events: auto;
+    }
+    .carousel-img.prev {
+      opacity: 0.7;
+      filter: grayscale(40%) brightness(0.6);
+      transform: translate(-150%, -50%) scale(0.85);
+      z-index: 1;
+    }
+    .carousel-img.next {
+      opacity: 0.7;
+      filter: grayscale(40%) brightness(0.6);
+      transform: translate(50%, -50%) scale(0.85);
+      z-index: 1;
+    }
+    .carousel-img.hidden {
+      opacity: 0;
+      pointer-events: none;
+      filter: grayscale(100%) blur(2px);
+      transform: translate(-50%, -50%) scale(0.7);
+      z-index: 0;
+    }
+    .carousel-btn {
+      background: transparent;
+      border: none;
+      color: #2ecc71;
+      font-size: 28px;
+      width: 54px;
+      height: 54px;
+      /* 移除圓形框 */
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 0 18px;
+      transition: background 0.18s, box-shadow 0.18s;
+      z-index: 3;
+      box-shadow: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+      padding: 0;
+    }
+    .carousel-btn:hover, .carousel-btn:focus {
+      background: #23262f;
+      box-shadow: 0 2px 8px #2ecc7133;
+      border-radius: 12px;
+    }
+    .carousel-btn svg {
+      width: 28px;
+      height: 28px;
+      display: block;
+      fill: #2ecc71;
+      transition: fill 0.18s;
+    }
+    .carousel-btn:hover svg, .carousel-btn:focus svg {
+      fill: #27ae60;
+    }
+    @media (max-width: 600px) {
+      .screenshot-carousel {
+        max-width: 98vw;
+        min-height: 140px;
+      }
+      .carousel-track {
+        max-height: 40vw;
+        min-height: 100px;
+        height: 140px;
+        padding: 16px 0;
+      }
+      .carousel-img {
+        height: 100px;
+        max-width: 98vw;
+        max-height: 40vw;
+      }
+    }
+    .nav-badges {
+      display: none;
+    }
+    .release-badge {
+      position: static;
+      margin-left: 10px;
+      display: inline-flex;
+      align-items: baseline;
+      height: auto;
+    }
+    .release-badge img {
+      height: 20px;
+      border-radius: 4px;
+      background: #23262f;
+      vertical-align: baseline;
+      box-shadow: none;
+    }
+    .title {
+      margin-bottom: 0;
+      margin-top: 0;
+      display: inline;
+      position: relative;
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
+    .title-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 6px;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-left">
+      <img src="assets/icon-cut.png" alt="logo" class="nav-logo" />
+      <div class="nav-title">oldfish影片下載器</div>
+    </div>
+    <div class="nav-right">
+      <a href="https://github.com/oldfish101240/oldfish-Video-Downloader" target="_blank" title="GitHub stars" style="margin-right:4px;">
+        <img src="https://img.shields.io/github/stars/oldfish101240/oldfish-Video-Downloader?style=social" alt="GitHub stars" style="height:22px;vertical-align:middle;border-radius:4px;background:#23262f;">
+      </a>
+      <a href="https://github.com/oldfish101240/oldfish-Video-Downloader" target="_blank">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <img class="title-img" src="assets/icon-cut.png" alt="logo" />
+    <div class="title-row">
+      <div style="margin: 0 auto; display: flex; align-items: baseline; justify-content: center;">
+        <h1 class="title">oldfish影片下載器</h1>
+        <span class="release-badge">
+          <img src="https://img.shields.io/github/v/release/oldfish101240/oldfish-Video-Downloader?style=flat-square&color=2ecc71&label=" alt="Latest release" />
+        </span>
+      </div>
+    </div>
+    <h2 class="small_title">輕鬆收藏網路上的影片</h2>
+    <a class="download-btn" href="https://github.com/oldfish101240/oldfish-Video-Downloader/releases" target="_blank">下載</a>
+    <div class="download-note">僅限windows 10/11 64bit</div>
+
+    <!-- 將輪播區塊移到 container 內部，並移除多餘 padding/margin -->
+    <div class="screenshot-carousel">
+      <button class="carousel-btn left" onclick="prevScreenshot()" aria-label="上一張">
+        <svg viewBox="0 0 24 24"><path d="M15.5 19a1 1 0 0 1-.7-1.7L18.1 14H6a1 1 0 1 1 0-2h12.1l-3.3-3.3A1 1 0 1 1 16.9 7.3l5 5a1 1 0 0 1 0 1.4l-5 5a1 1 0 0 1-.7.3z" transform="scale(-1,1) translate(-24,0)"/></svg>
+      </button>
+      <div class="carousel-track" id="carousel-track">
+        <img src="assets/screenshots/1.png" class="carousel-img active" />
+        <img src="assets/screenshots/2.png" class="carousel-img" />
+        <img src="assets/screenshots/3.png" class="carousel-img" />
+        <!-- 你可以依需求增加更多圖片 -->
+      </div>
+      <button class="carousel-btn right" onclick="nextScreenshot()" aria-label="下一張">
+        <svg viewBox="0 0 24 24"><path d="M15.5 19a1 1 0 0 1-.7-1.7L18.1 14H6a1 1 0 1 1 0-2h12.1l-3.3-3.3A1 1 0 1 1 16.9 7.3l5 5a1 1 0 0 1 0 1.4l-5 5a1 1 0 0 1-.7.3z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">Copyright &copy; 2025 <a href="https://github.com/oldfish101240" target="_blank" style="color: #777;">老魚oldfish</a> · 本頁由羽協助設計 ❤️</div>
+
+  <script>
+    // 2D平移輪播功能
+    const imgs = Array.from(document.querySelectorAll('.carousel-img'));
+    let idx = 0;
+    let animating = false;
+
+    function updateCarousel(newIdx) {
+      if (animating || newIdx === idx) return;
+      animating = true;
+
+      const prevIdx = (newIdx - 1 + imgs.length) % imgs.length;
+      const nextIdx = (newIdx + 1) % imgs.length;
+
+      imgs.forEach((img, i) => {
+        img.classList.remove('active', 'prev', 'next', 'hidden');
+        if (i === newIdx) {
+          img.classList.add('active');
+        } else if (i === prevIdx) {
+          img.classList.add('prev');
+        } else if (i === nextIdx) {
+          img.classList.add('next');
+        } else {
+          img.classList.add('hidden');
+        }
+      });
+
+      setTimeout(() => {
+        animating = false;
+      }, 500);
+
+      idx = newIdx;
+    }
+
+    function prevScreenshot() {
+      if (animating) return;
+      const newIdx = (idx - 1 + imgs.length) % imgs.length;
+      updateCarousel(newIdx);
+    }
+    function nextScreenshot() {
+      if (animating) return;
+      const newIdx = (idx + 1) % imgs.length;
+      updateCarousel(newIdx);
+    }
+
+    // 初始化
+    function initCarousel() {
+      imgs.forEach((img, i) => {
+        img.classList.remove('active', 'prev', 'next', 'hidden');
+        img.style.transition = 'none';
+      });
+      const prevIdx = (idx - 1 + imgs.length) % imgs.length;
+      const nextIdx = (idx + 1) % imgs.length;
+      imgs.forEach((img, i) => {
+        if (i === idx) img.classList.add('active');
+        else if (i === prevIdx) img.classList.add('prev');
+        else if (i === nextIdx) img.classList.add('next');
+        else img.classList.add('hidden');
+      });
+      setTimeout(() => {
+        imgs.forEach(img => img.style.transition = '');
+      }, 50);
+    }
+    initCarousel();
+
+  </script>
+</body>
+</html>
