@@ -39,16 +39,19 @@
       display: flex;
       align-items: center;
       gap: 10px;
-    }
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 4px; /* 原 gap: 0，改為 4px 更緊湊 */
+      /* 靠左一點 */
+      margin-left: -8px;
     }
     .nav-logo {
       height: 30px;
       width: auto;
       filter: drop-shadow(0 0 2px #000);
+      margin-right: 8px;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 4px; /* 原 gap: 0，改為 4px 更緊湊 */
     }
     .nav-title {
       font-size: 18px;
@@ -79,7 +82,7 @@
     .title-img {
       display: block;
       margin: auto;
-      width: 8%;
+      width: 60%;
       height: auto;
       max-width: 500px;
       filter: drop-shadow(0 0 10px #000);
@@ -133,8 +136,7 @@
     }
     .screenshot-carousel {
       width: 100%;
-      max-width: none;
-      /* 移除外部 padding 與 margin，讓其與 container 同寬 */
+      max-width: 1500px; /* 再加大圖片區塊寬度 */
       margin: 32px 0 0 0;
       padding-left: 0;
       padding-right: 0;
@@ -145,6 +147,8 @@
       justify-content: center;
       position: relative;
       z-index: 10;
+      gap: 0;
+      position: relative;
     }
     .carousel-track {
       width: 100%;
@@ -186,7 +190,8 @@
       transition:
         transform 0.5s cubic-bezier(.4,0,.2,1),
         opacity 0.5s cubic-bezier(.4,0,.2,1),
-        filter 0.5s cubic-bezier(.4,0,.2,1);
+        filter 0.5s cubic-bezier(.4,0,.2,1),
+        box-shadow 0.3s;
       display: block;
     }
     .carousel-img.active {
@@ -195,6 +200,11 @@
       transform: translate(-50%, -50%) scale(1);
       z-index: 2;
       pointer-events: auto;
+    }
+    .carousel-img.active:hover {
+      transform: translate(-50%, -50%) scale(1.08);
+      box-shadow: 0 8px 32px #0007;
+      z-index: 3;
     }
     .carousel-img.prev {
       opacity: 0.7;
@@ -222,10 +232,10 @@
       font-size: 28px;
       width: 54px;
       height: 54px;
-      /* 移除圓形框 */
       border-radius: 8px;
       cursor: pointer;
-      margin: 0 18px;
+      margin: 0 16px;
+      /* 原本 4px，改為 16px 讓箭頭更靠近中間主圖 */
       transition: background 0.18s, box-shadow 0.18s;
       z-index: 3;
       box-shadow: none;
@@ -234,6 +244,7 @@
       justify-content: center;
       outline: none;
       padding: 0;
+      position: relative;
     }
     .carousel-btn:hover, .carousel-btn:focus {
       background: #23262f;
@@ -265,6 +276,33 @@
         height: 100px;
         max-width: 98vw;
         max-height: 40vw;
+      }
+    }
+    /* 新增：當視窗寬度大於圖片區塊時，讓箭頭貼齊圖片區塊邊緣 */
+    @media (min-width: 900px) {
+      .screenshot-carousel {
+        max-width: 1500px; /* 同步加大 */
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .carousel-btn.left {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-left: 0;
+      }
+      .carousel-btn.right {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-right: 0;
+      }
+      /* 讓圖片主體與箭頭間距一致 */
+      .carousel-track {
+        width: calc(100% - 108px); /* 54px*2箭頭寬 + 16px*2間距 */
+        margin: 0 54px;
       }
     }
     .nav-badges {
@@ -306,8 +344,10 @@
 <body>
   <nav>
     <div class="nav-left">
-      <img src="assets/icon-cut.png" alt="logo" class="nav-logo" />
-      <div class="nav-title">oldfish影片下載器</div>
+      <a href="index.html" style="display:flex;align-items:center;text-decoration:none;">
+        <img src="assets/icon-cut.png" alt="logo" class="nav-logo" />
+        <div class="nav-title">oldfish影片下載器</div>
+      </a>
     </div>
     <div class="nav-right">
       <a href="https://github.com/oldfish101240/oldfish-Video-Downloader" target="_blank" title="GitHub stars" style="margin-right:4px;">
@@ -318,10 +358,12 @@
   </nav>
 
   <div class="container">
-    <img class="title-img" src="assets/icon-cut.png" alt="logo" />
+    <a href="index.html" style="display:inline-block;">
+      <img class="title-img" src="assets/icon-cut.png" alt="logo" />
+    </a>
     <div class="title-row">
       <div style="margin: 0 auto; display: flex; align-items: baseline; justify-content: center;">
-        <h1 class="title">oldfish影片下載器</h1>
+        <h1 class="title" style="cursor:pointer;" onclick="location.href='index.html'">oldfish影片下載器</h1>
         <span class="release-badge">
           <img src="https://img.shields.io/github/v/tag/oldfish101240/oldfish-Video-Downloader?style=flat-square&color=2ecc71&label=" alt="Latest release" />
         </span>
@@ -415,5 +457,7 @@
     initCarousel();
 
   </script>
+</body>
+</html>
 </body>
 </html>
